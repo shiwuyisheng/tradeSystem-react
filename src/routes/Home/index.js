@@ -15,79 +15,38 @@ import {
   Util
 } from "bizcharts";
 import DataSet from "@antv/data-set";
+import axios from 'axios'
+import './style.css'
 
 class Basiccolumn extends React.Component {
+  state={
+    data:[],
+    newdata:[]
+  }
+   componentDidMount() {
+    axios
+      .post("http://localhost:8080/TradingArea/countSum")
+      .then(response => {
+        this.setState({
+          data: response.data.slice(0, 4),
+          newdata: response.data.slice(4)
+        });
+        // console.log(response.data.slice(4));
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
   render() {
-    const data = [
-      {
-        year: "1951 年",
-        sales: 38
-      },
-      {
-        year: "1952 年",
-        sales: 52
-      },
-      {
-        year: "1956 年",
-        sales: 61
-      },
-      {
-        year: "1957 年",
-        sales: 145
-      },
-      {
-        year: "1958 年",
-        sales: 48
-      },
-      {
-        year: "1959 年",
-        sales: 38
-      },
-      {
-        year: "1960 年",
-        sales: 38
-      },
-      {
-        year: "1962 年",
-        sales: 38
-      }
-    ];
-    const cols = {
-      sales: {
-        tickInterval: 20
-      }
-    };
-     const { DataView } = DataSet;
-     const newdata = [
-       {
-         item: "事例一",
-         count: 40
-       },
-       {
-         item: "事例二",
-         count: 21
-       },
-       {
-         item: "事例三",
-         count: 17
-       },
-       {
-         item: "事例四",
-         count: 13
-       },
-       {
-         item: "事例五",
-         count: 9
-       }
-     ];
+    const { DataView } = DataSet;
      const dv = new DataView();
-     dv.source(newdata).transform({
+     dv.source(this.state.newdata).transform({
        type: "percent",
-       field: "count",
-       dimension: "item",
+       field: "sum",
+       dimension: "name",
        as: "percent"
      });
-     const newcols = {
+     const cols = {
        percent: {
          formatter: val => {
            val = val * 100 + "%";
@@ -95,22 +54,25 @@ class Basiccolumn extends React.Component {
          }
        }
      };
+     
     return (
-      <div>
-        <Chart height={400} data={data} scale={cols} forceFit>
-          <Axis name="year" />
-          <Axis name="sales" />
+      <div className="home">
+        <div className="count">系统模块柱状统计图</div>
+        <Chart height={360} data={this.state.data} forceFit>
+          <Axis name="name" />
+          <Axis name="sum" />
           <Tooltip
             crosshairs={{
               type: "y"
             }}
           />
-          <Geom type="interval" position="year*sales" />
+          <Geom type="interval" position="name*sum" />
         </Chart>
+        <div className="count">店铺类型扇形统计图</div>
         <Chart
           height={window.innerHeight}
           data={dv}
-          scale={newcols}
+          scale={cols}
           padding={[80, 100, 80, 80]}
           forceFit
         >
@@ -128,13 +90,13 @@ class Basiccolumn extends React.Component {
           <Geom
             type="intervalStack"
             position="percent"
-            color="item"
+            color="name"
             tooltip={[
-              "item*percent",
-              (item, percent) => {
+              "name*percent",
+              (name, percent) => {
                 percent = percent * 100 + "%";
                 return {
-                  name: item,
+                  name: name,
                   value: percent
                 };
               }
@@ -146,8 +108,8 @@ class Basiccolumn extends React.Component {
           >
             <Label
               content="percent"
-              formatter={(val, item) => {
-                return item.point.item + ": " + val;
+              formatter={(val, name) => {
+                return name.point.name + ": " + val;
               }}
             />
           </Geom>
