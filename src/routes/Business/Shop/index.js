@@ -12,6 +12,8 @@ import {
 import { Link } from "react-router-dom";
 import React from "react";
 import axios from "axios";
+import { _getCookie } from "../../../utils/Session";
+const tosId = _getCookie("tosId");
 const { Column } = Table;
 class Shop extends React.Component {
   state = {
@@ -39,7 +41,11 @@ class Shop extends React.Component {
                 {
                   pageNum: "1",
                   pageSize: "10",
-                  condition: {}
+                  condition: {
+                    trade:{
+                      tradeId:tosId
+                    }
+                  }
                 }
               )
               .then(response => {
@@ -75,7 +81,11 @@ class Shop extends React.Component {
                 {
                   pageNum: "1",
                   pageSize: "10",
-                  condition: {}
+                  condition: {
+                    trade: {
+                      tradeId: tosId
+                    }
+                  }
                 }
               )
               .then(response => {
@@ -103,7 +113,11 @@ class Shop extends React.Component {
       .post("http://localhost:8080/TradingArea/store/page", {
         pageNum: "1",
         pageSize: "10",
-        condition: {}
+        condition: {
+          trade: {
+            tradeId: tosId
+          }
+        }
       })
       .then(response => {
         this.setState({
@@ -129,7 +143,11 @@ class Shop extends React.Component {
       .post("http://localhost:8080/TradingArea/store/page", {
         pageNum: page,
         pageSize: "10",
-        condition: {}
+        condition: {
+          trade: {
+            tradeId: tosId
+          }
+        }
       })
       .then(response => {
         this.setState({
@@ -159,10 +177,12 @@ class Shop extends React.Component {
               storeName: values.storeName,
               storeType: values.storeType,
               storeState: values.storeState,
-              
+              trade: {
+                tradeId: tosId
+              }
             }
           })
-          .then((response) =>{
+          .then(response => {
             console.log(response);
             this.setState({ dataSource: response.data.list });
           })
@@ -180,7 +200,11 @@ class Shop extends React.Component {
       .post("http://localhost:8080/TradingArea/store/page", {
         pageNum: "1",
         pageSize: "10",
-        condition: {}
+        condition: {
+          trade: {
+            tradeId: tosId
+          }
+        }
       })
       .then(response => {
         this.setState({

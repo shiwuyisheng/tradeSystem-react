@@ -14,7 +14,9 @@ import React from "react";
 import moment from "moment";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {_getCookie} from '../../../utils/Session'
 const { Column } = Table;
+const tosId = _getCookie('tosId')
 class StoreActivity extends React.Component {
   state = {
     expand: false,
@@ -37,6 +39,9 @@ class StoreActivity extends React.Component {
             pageNum: "1",
             pageSize: "10",
             condition: {
+              store:{
+                storeId:tosId
+              },
               activityId: parseInt(values.activityId),
               activityName: values.activityName,
               activityPhone: values.activityPhone,
@@ -47,7 +52,12 @@ class StoreActivity extends React.Component {
           })
           .then(response => {
             console.log(response);
-            this.setState({ dataSource: response.data.list });
+            this.setState({
+              dataSource: response.data.list,
+              loading: false,
+              total: response.data.totalRecord
+            });
+            
           })
           .catch(function(error) {
             console.log(error);
@@ -65,7 +75,10 @@ class StoreActivity extends React.Component {
         pageSize: "10",
         condition: {
           createTime: "1998-01-01",
-          endTime: "3000-12-31"
+          endTime: "3000-12-31",
+          store:{
+                storeId:tosId
+              },
         }
       })
       .then(response => {
@@ -104,8 +117,11 @@ class StoreActivity extends React.Component {
                   pageNum: "1",
                   pageSize: "10",
                   condition: {
-                    createTime: '1998-01-01',
-                    endTime: '3000-12-31'
+                    store: {
+                      storeId: tosId
+                    },
+                    createTime: "1998-01-01",
+                    endTime: "3000-12-31"
                   }
                 }
               )
@@ -143,8 +159,11 @@ class StoreActivity extends React.Component {
                   pageNum: "1",
                   pageSize: "10",
                   condition: {
-                    createTime: '1998-01-01',
-                    endTime: '3000-12-31'
+                    store: {
+                      storeId: tosId
+                    },
+                    createTime: "1998-01-01",
+                    endTime: "3000-12-31"
                   }
                 }
               )
@@ -174,8 +193,11 @@ class StoreActivity extends React.Component {
         pageNum: "1",
         pageSize: "10",
         condition: {
-          createTime: '1998-01-01',
-          endTime: '3000-12-31'
+          store: {
+            storeId: tosId
+          },
+          createTime: "1998-01-01",
+          endTime: "3000-12-31"
         }
       })
       .then(response => {
@@ -203,6 +225,9 @@ class StoreActivity extends React.Component {
         pageNum: page,
         pageSize: "10",
         condition: {
+          store: {
+            storeId: tosId
+          },
           createTime: "1998-01-01",
           endTime: "3000-12-31"
         }
@@ -274,7 +299,7 @@ class StoreActivity extends React.Component {
             <Col span={8}>
               <Form.Item label={`活动状态`}>
                 {getFieldDecorator("activityState", {
-                  initialValue: "0",
+                  initialValue: "1",
                   rules: [
                     {
                       required: false,
@@ -283,8 +308,8 @@ class StoreActivity extends React.Component {
                   ]
                 })(
                   <Select span={8} id="activityState">
-                    <Option value="0">上线</Option>
-                    <Option value="1">下线</Option>
+                    <Option value="1">上线</Option>
+                    <Option value="0">下线</Option>
                   </Select>
                 )}
               </Form.Item>
